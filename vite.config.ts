@@ -31,11 +31,13 @@ const config = defineConfig({
     // Limits the number of file watchers and processing threads
     watch: {
       usePolling: false, // Set to true only if HMR fails on your HDD
+      // Don't track these to save CPU/RAM
+      ignored: ["**/node_modules/**", "**/dist/**", "**/.git/**"],
     },
   },
   build: {
     // This is where memory-saving sourcemap settings live
-    sourcemap: false,
+    sourcemap: false, // Disabling this saves massive RAM during build
     rollupOptions: {
       // Logic to limit workers: This actually uses the cpuCount variable
       maxParallelFileOps: cpuCount,
