@@ -1,118 +1,101 @@
-import { createFileRoute } from '@tanstack/react-router'
-import {
-  Zap,
-  Server,
-  Route as RouteIcon,
-  Shield,
-  Waves,
-  Sparkles,
-} from 'lucide-react'
+import { createFileRoute } from "@tanstack/react-router";
+import { HeroBanner, type HeroItem } from "@/components/Hero";
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute("/")({ component: App });
+
+const heroItems: HeroItem[] = [
+  {
+    id: "clx1a2b3c4d5",
+    title: "The Last Frontier",
+    logoUrl: "/images/titles/the-last-frontier-logo.png",
+    synopsis:
+      "In a world where humanity's last outpost teeters on the edge of extinction, one reluctant hero must journey across a ravaged landscape to ignite a beacon of hope — before time runs out.",
+    backdropUrl: "/images/titles/the-last-frontier-backdrop.jpg",
+    trailerUrl: "/videos/the-last-frontier-trailer.mp4",
+    contentType: "movie",
+    genres: ["Sci-Fi", "Thriller", "Adventure"],
+    releaseYear: 2025,
+    maturityRating: "PG-13",
+    matchScore: 97,
+    runtimeMinutes: 142,
+    isOriginal: true,
+    isNew: true,
+    href: "/movie/the-last-frontier",
+  },
+  {
+    id: "clx2e5f6g7h8",
+    title: "Crimson Veil",
+    synopsis:
+      "A detective with a haunted past unravels a conspiracy that reaches into the highest corridors of power. Each clue brings her closer to the truth — and closer to danger.",
+    backdropUrl: "/images/titles/crimson-veil-backdrop.jpg",
+    trailerUrl: "/videos/crimson-veil-trailer.mp4",
+    contentType: "series",
+    genres: ["Crime", "Drama", "Mystery"],
+    releaseYear: 2025,
+    maturityRating: "TV-MA",
+    matchScore: 93,
+    seasonCount: 2,
+    episodeCount: 16,
+    isOriginal: true,
+    isTopTen: true,
+    topTenRank: 1,
+    href: "/series/crimson-veil",
+  },
+  {
+    id: "clx3i9j0k1l2",
+    title: "Ocean Beneath",
+    synopsis:
+      "Dive into the planet's last unexplored wilderness. From bioluminescent abyss to coral kingdoms, witness nature's most extraordinary spectacle unfold in breathtaking detail.",
+    backdropUrl: "/images/titles/ocean-beneath-backdrop.jpg",
+    contentType: "documentary",
+    genres: ["Documentary", "Nature", "Science"],
+    releaseYear: 2025,
+    maturityRating: "PG",
+    matchScore: 88,
+    seasonCount: 1,
+    episodeCount: 8,
+    isNew: true,
+    href: "/series/ocean-beneath",
+  },
+  {
+    id: "clx4m3n4o5p6",
+    title: "Neon Ronin",
+    synopsis:
+      "In Neo-Tokyo 2087, a disgraced samurai turned cyber-mercenary takes on one last job that could either clear her name or plunge the city into chaos.",
+    backdropUrl: "/images/titles/neon-ronin-backdrop.jpg",
+    trailerUrl: "/videos/neon-ronin-trailer.mp4",
+    contentType: "movie",
+    genres: ["Action", "Sci-Fi", "Anime"],
+    releaseYear: 2025,
+    maturityRating: "R",
+    matchScore: 91,
+    runtimeMinutes: 118,
+    isOriginal: true,
+    isTopTen: true,
+    topTenRank: 3,
+    href: "/movie/neon-ronin",
+  },
+  {
+    id: "clx5q7r8s9t0",
+    title: "The Weight of Silence",
+    synopsis:
+      "When a small-town teacher vanishes without a trace, the lives of five strangers become entangled in a web of secrets that will change them forever.",
+    backdropUrl: "/images/titles/weight-of-silence-backdrop.jpg",
+    contentType: "series",
+    genres: ["Drama", "Thriller", "Mystery"],
+    releaseYear: 2024,
+    maturityRating: "TV-14",
+    matchScore: 85,
+    seasonCount: 3,
+    episodeCount: 24,
+    href: "/series/the-weight-of-silence",
+  },
+];
 
 function App() {
-  const features = [
-    {
-      icon: <Zap className="w-12 h-12 text-cyan-400" />,
-      title: 'Powerful Server Functions',
-      description:
-        'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.',
-    },
-    {
-      icon: <Server className="w-12 h-12 text-cyan-400" />,
-      title: 'Flexible Server Side Rendering',
-      description:
-        'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.',
-    },
-    {
-      icon: <RouteIcon className="w-12 h-12 text-cyan-400" />,
-      title: 'API Routes',
-      description:
-        'Build type-safe API endpoints alongside your application. No separate backend needed.',
-    },
-    {
-      icon: <Shield className="w-12 h-12 text-cyan-400" />,
-      title: 'Strongly Typed Everything',
-      description:
-        'End-to-end type safety from server to client. Catch errors before they reach production.',
-    },
-    {
-      icon: <Waves className="w-12 h-12 text-cyan-400" />,
-      title: 'Full Streaming Support',
-      description:
-        'Stream data from server to client progressively. Perfect for AI applications and real-time updates.',
-    },
-    {
-      icon: <Sparkles className="w-12 h-12 text-cyan-400" />,
-      title: 'Next Generation Ready',
-      description:
-        'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.',
-    },
-  ]
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      <section className="relative py-20 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
-        <div className="relative max-w-5xl mx-auto">
-          <div className="flex items-center justify-center gap-6 mb-6">
-            <img
-              src="/tanstack-circle-logo.png"
-              alt="TanStack Logo"
-              className="w-24 h-24 md:w-32 md:h-32"
-            />
-            <h1 className="text-6xl md:text-7xl font-black text-white [letter-spacing:-0.08em]">
-              <span className="text-gray-300">TANSTACK</span>{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                START
-              </span>
-            </h1>
-          </div>
-          <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
-            The framework for next generation AI applications
-          </p>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-            Full-stack framework powered by TanStack Router for React and Solid.
-            Build modern applications with server functions, streaming, and type
-            safety.
-          </p>
-          <div className="flex flex-col items-center gap-4">
-            <a
-              href="https://tanstack.com/start"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
-            >
-              Documentation
-            </a>
-            <p className="text-gray-400 text-sm mt-2">
-              Begin your TanStack Start journey by editing{' '}
-              <code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
-                /src/routes/index.tsx
-              </code>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
-            >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+    <div className="min-h-screen bg-background">
+      <HeroBanner items={heroItems} autoRotateInterval={8000} />
     </div>
-  )
+  );
 }
