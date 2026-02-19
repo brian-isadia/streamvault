@@ -55,6 +55,7 @@ export const HeroBillboard = memo(function HeroBillboard({
   };
 
   const showVideoLayer = shouldPlayVideo && videoLoaded;
+  console.log(item.backdropUrl);
 
   return (
     <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -65,16 +66,14 @@ export const HeroBillboard = memo(function HeroBillboard({
           ${isActive && !showVideoLayer ? "scale-[1.05]" : "scale-100"}
         `}
       >
-        <Image
+        <img
           src={item.backdropUrl}
           alt=""
-          layout="fullWidth"
           sizes="100vw"
           className={`
-            object-cover object-top transition-opacity duration-slow ease-standard
+            w-full object-cover object-top transition-opacity duration-slow ease-standard h-full
             ${imageLoaded ? "opacity-100" : "opacity-0"}
           `}
-          priority={priority}
           onLoad={() => setImageLoaded(true)}
         />
       </div>
