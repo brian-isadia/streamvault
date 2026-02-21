@@ -13,5 +13,5 @@ count.txt
 __unconfig*
 todos.json
 docs
-
-public
+public/images/titles
+public/videos
