@@ -7,7 +7,7 @@ const heroItems: HeroItem[] = [
   {
     id: "clx1a2b3c4d5",
     title: "The Last Frontier",
-    logoUrl: "/images/titles/the-last-frontier-logo.png",
+    logoUrl: "/images/titles/the-last-frontier-backdrop.jpg",
     synopsis:
       "In a world where humanity's last outpost teeters on the edge of extinction, one reluctant hero must journey across a ravaged landscape to ignite a beacon of hope — before time runs out.",
     backdropUrl: "/images/titles/the-last-frontier-backdrop.jpg",
@@ -22,7 +22,21 @@ const heroItems: HeroItem[] = [
     isNew: true,
     href: "/movie/the-last-frontier",
   },
-
+  {
+    id: "clx5q7r8s9t0",
+    title: "The Weight of Silence",
+    synopsis:
+      "When a small-town teacher vanishes without a trace, the lives of five strangers become entangled in a web of secrets that will change them forever.",
+    backdropUrl: "/images/titles/the-last-frontier-backdrop.jpg",
+    contentType: "series",
+    genres: ["Drama", "Thriller", "Mystery"],
+    releaseYear: 2024,
+    maturityRating: "TV-14",
+    matchScore: 85,
+    seasonCount: 3,
+    episodeCount: 24,
+    href: "/series/the-weight-of-silence",
+  },
   {
     id: "clx3i9j0k1l2",
     title: "Ocean Beneath",
@@ -56,21 +70,6 @@ const heroItems: HeroItem[] = [
     isTopTen: true,
     topTenRank: 3,
     href: "/movie/neon-ronin",
-  },
-  {
-    id: "clx5q7r8s9t0",
-    title: "The Weight of Silence",
-    synopsis:
-      "When a small-town teacher vanishes without a trace, the lives of five strangers become entangled in a web of secrets that will change them forever.",
-    backdropUrl: "/images/titles/weight-of-silence-backdrop.jpg",
-    contentType: "series",
-    genres: ["Drama", "Thriller", "Mystery"],
-    releaseYear: 2024,
-    maturityRating: "TV-14",
-    matchScore: 85,
-    seasonCount: 3,
-    episodeCount: 24,
-    href: "/series/the-weight-of-silence",
   },
 ];
 

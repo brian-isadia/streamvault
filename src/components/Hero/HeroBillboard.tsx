@@ -14,7 +14,7 @@ export const HeroBillboard = memo(function HeroBillboard({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(true);
 
   const shouldPlayVideo =
     isActive && showVideo && item.trailerUrl && !videoError;
@@ -55,7 +55,6 @@ export const HeroBillboard = memo(function HeroBillboard({
   };
 
   const showVideoLayer = shouldPlayVideo && videoLoaded;
-  console.log(item.backdropUrl);
 
   return (
     <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -67,14 +66,13 @@ export const HeroBillboard = memo(function HeroBillboard({
         `}
       >
         <img
+          key={item.backdropUrl}
           src={item.backdropUrl}
           alt=""
-          sizes="100vw"
-          className={`
-            w-full object-cover object-top transition-opacity duration-slow ease-standard h-full
-            ${imageLoaded ? "opacity-100" : "opacity-0"}
-          `}
-          onLoad={() => setImageLoaded(true)}
+          className="w-full object-cover object-top h-full opacity-100"
+          onError={(e) => {
+            console.error("Image failed to load:", item.backdropUrl, e);
+          }}
         />
       </div>
 
