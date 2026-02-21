@@ -22,25 +22,7 @@ const heroItems: HeroItem[] = [
     isNew: true,
     href: "/movie/the-last-frontier",
   },
-  {
-    id: "clx2e5f6g7h8",
-    title: "Crimson Veil",
-    synopsis:
-      "A detective with a haunted past unravels a conspiracy that reaches into the highest corridors of power. Each clue brings her closer to the truth — and closer to danger.",
-    backdropUrl: "/images/titles/crimson-veil-backdrop.jpg",
-    trailerUrl: "/videos/crimson-veil-trailer.mp4",
-    contentType: "series",
-    genres: ["Crime", "Drama", "Mystery"],
-    releaseYear: 2025,
-    maturityRating: "TV-MA",
-    matchScore: 93,
-    seasonCount: 2,
-    episodeCount: 16,
-    isOriginal: true,
-    isTopTen: true,
-    topTenRank: 1,
-    href: "/series/crimson-veil",
-  },
+
   {
     id: "clx3i9j0k1l2",
     title: "Ocean Beneath",
