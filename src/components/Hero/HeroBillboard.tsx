@@ -75,18 +75,12 @@ export const HeroBillboard = memo(function HeroBillboard({
   const showVideoLayer = shouldPlayVideo && videoLoaded;
 
   return (
-    <div
-      className="absolute inset-0 overflow-hidden bg-background"
-      aria-hidden="true"
-    >
-      {/* ── Background Image (Ken Burns & Blur-up) ── */}
+    <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+      {/* ── Background Image ── */}
       <div
         className={`
-          absolute inset-0 will-change-transform
-          ${isActive
-            ? "transition-transform duration-20000 ease-linear scale-110"
-            : "transition-transform duration-0 delay-1000 scale-100"
-          }
+          absolute inset-0 transition-transform duration-20000 ease-linear
+          ${isActive && !showVideoLayer ? "scale-[1.05]" : "scale-100"}
         `}
       >
         <img
@@ -104,7 +98,7 @@ export const HeroBillboard = memo(function HeroBillboard({
         />
       </div>
 
-      {/* ── Background Video (Guarded Fading) ── */}
+      {/* ── Background Video ── */}
       {item.trailerUrl && !videoError && (
         <video
           ref={videoRef}

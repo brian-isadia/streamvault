@@ -47,10 +47,7 @@ export const HeroContent = memo(function HeroContent({
   return (
     <div
       className={`
-        relative z-10 flex flex-col justify-end
-        h-full px-(--row-padding-x) pb-24 md:pb-[10%] lg:pb-[8%]
-        max-w-3xl
-        transition-all duration-700 ease-enter
+        relative z-10 flex flex-col justify-end h-full px-(--row-padding-x) pb-24 md:pb-[10%] lg:pb-[8%] max-w-3xl transition-all duration-700 ease-enter
         ${isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
       `}
     >
@@ -112,23 +109,6 @@ export const HeroContent = memo(function HeroContent({
           text-body-sm sm:text-body text-foreground-secondary
         "
       >
-        {/* Match Score */}
-        {item.matchScore && item.matchScore > 0 && (
-          <span
-            className={`
-              font-bold
-              ${item.matchScore >= 75
-                ? "match-score-high"
-                : item.matchScore >= 50
-                  ? "match-score-medium"
-                  : "match-score-low"
-              }
-            `}
-          >
-            {item.matchScore}% Match
-          </span>
-        )}
-
         {/* Maturity Rating */}
         <span
           className="
