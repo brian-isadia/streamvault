@@ -7,7 +7,7 @@ const heroItems: HeroItem[] = [
   {
     id: "clx1a2b3c4d5",
     title: "The Last Frontier",
-    logoUrl: "/images/titles/the-last-frontier-backdrop.jpg",
+    logoUrl: "",
     synopsis:
       "In a world where humanity's last outpost teeters on the edge of extinction, one reluctant hero must journey across a ravaged landscape to ignite a beacon of hope — before time runs out.",
     backdropUrl: "/images/titles/the-last-frontier-backdrop.jpg",

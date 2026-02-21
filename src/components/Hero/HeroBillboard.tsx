@@ -14,7 +14,17 @@ export const HeroBillboard = memo(function HeroBillboard({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // ── Reset state when item changes ────────────────
+  useEffect(() => {
+    // Only reset if this is the active slide being initialized
+    if (isActive) {
+      setImageLoaded(false);
+      setVideoLoaded(false);
+      setVideoError(false);
+    }
+  }, [item.id, isActive]);
 
   const shouldPlayVideo =
     isActive && showVideo && item.trailerUrl && !videoError;
@@ -46,6 +56,7 @@ export const HeroBillboard = memo(function HeroBillboard({
     if (!isActive) {
       setVideoLoaded(false);
       setVideoError(false);
+      setImageLoaded(false); // Add this
     }
   }, [isActive]);
 
@@ -57,39 +68,45 @@ export const HeroBillboard = memo(function HeroBillboard({
   const showVideoLayer = shouldPlayVideo && videoLoaded;
 
   return (
-    <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-      {/* ── Background Image ── */}
+    <div
+      className="absolute inset-0 overflow-hidden bg-background"
+      aria-hidden="true"
+    >
+      {/* ── Background Image (Ken Burns & Blur-up) ── */}
       <div
         className={`
-          absolute inset-0 transition-transform duration-20000 ease-linear
-          ${isActive && !showVideoLayer ? "scale-[1.05]" : "scale-100"}
+          absolute inset-0 will-change-transform
+          ${isActive ? "transition-transform duration-20000 ease-linear scale-110" : "scale-100"}
         `}
       >
         <img
-          key={item.backdropUrl}
+          key={item.id}
           src={item.backdropUrl}
           alt=""
-          className="w-full object-cover object-top h-full opacity-100"
-          onError={(e) => {
-            console.error("Image failed to load:", item.backdropUrl, e);
-          }}
+          className={`
+            w-full h-full object-cover object-center
+            transition-all duration-1200 ease-out
+            ${imageLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-3xl scale-105"}
+          `}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageLoaded(true)}
         />
       </div>
 
-      {/* ── Background Video ── */}
+      {/* ── Background Video (Guarded Fading) ── */}
       {item.trailerUrl && !videoError && (
         <video
           ref={videoRef}
           src={item.trailerUrl}
           muted={isMuted}
           playsInline
-          preload="none"
-          onCanPlay={handleCanPlay}
+          preload="auto"
+          onCanPlayThrough={handleCanPlay}
           onEnded={onVideoEnded}
           onError={() => setVideoError(true)}
           className={`
             absolute inset-0 w-full h-full object-cover
-            transition-opacity duration-slow ease-standard
+            transition-opacity duration-1500 ease-in-out
             ${showVideoLayer ? "opacity-100" : "opacity-0"}
           `}
         />
