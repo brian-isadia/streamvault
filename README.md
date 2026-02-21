@@ -1,4 +1,6 @@
-Welcome to your new TanStack Start app! 
+# StreamVault
+
+A movie and tv streaming platform built with TanStack start and Tailwind CSS V4.
 
 # Getting Started
 
@@ -37,8 +39,6 @@ If you prefer not to use Tailwind CSS:
 2. Replace the Tailwind import in `src/styles.css` with your own styles
 3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
 4. Uninstall the packages: `bun install @tailwindcss/vite tailwindcss -D`
-
-
 
 ## Routing
 
