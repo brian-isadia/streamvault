@@ -149,7 +149,7 @@ export function HeroBanner({
       ref={containerRef}
       className={`
         relative w-full
-        min-h-[56.25vw] max-h-[80vh]
+        min-h-[85vh] md:min-h-[56.25vw] max-h-[85vh] md:max-h-[80vh]
         overflow-hidden
         bg-background
         ${className}

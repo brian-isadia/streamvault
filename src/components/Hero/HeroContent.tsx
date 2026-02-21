@@ -21,7 +21,7 @@ export const HeroContent = memo(function HeroContent({
       parts.push(hours > 0 ? `${hours}h ${mins}m` : `${mins}m`);
     }
 
-    if (item.contentType === "series" && item.seasonCount) {
+    if (item.contentType === "tv" && item.seasonCount) {
       parts.push(
         item.seasonCount === 1
           ? `${item.episodeCount} Episodes`
@@ -33,7 +33,7 @@ export const HeroContent = memo(function HeroContent({
   }, [item]);
 
   const contentTypeLabel =
-    item.contentType === "series"
+    item.contentType === "tv"
       ? "Series"
       : item.contentType === "documentary"
         ? "Documentary"
@@ -42,15 +42,13 @@ export const HeroContent = memo(function HeroContent({
           : "Film";
 
   const ContentTypeIcon =
-    item.contentType === "series" || item.contentType === "documentary"
-      ? Tv
-      : Film;
+    item.contentType === "tv" || item.contentType === "documentary" ? Tv : Film;
 
   return (
     <div
       className={`
         relative z-10 flex flex-col justify-end
-        h-full px-(--row-padding-x) pb-[12%] sm:pb-[10%] lg:pb-[8%]
+        h-full px-(--row-padding-x) pb-24 md:pb-[10%] lg:pb-[8%]
         max-w-3xl
         transition-all duration-700 ease-enter
         ${isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
@@ -58,18 +56,18 @@ export const HeroContent = memo(function HeroContent({
     >
       {/* ── Badges Row ── */}
       <div className="flex flex-wrap items-center gap-2 mb-3">
-        {item.isOriginal && (
-          <span className="badge badge-original">
-            <svg
-              viewBox="0 0 24 24"
-              className="w-3.5 h-3.5 fill-current"
-              aria-hidden="true"
-            >
-              <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z" />
-            </svg>
-            StreamVault Original
-          </span>
-        )}
+        {/* {item.isOriginal && ( */}
+        {/*   <span className="badge badge-original"> */}
+        {/*     <svg */}
+        {/*       viewBox="0 0 24 24" */}
+        {/*       className="w-3.5 h-3.5 fill-current" */}
+        {/*       aria-hidden="true" */}
+        {/*     > */}
+        {/*       <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z" /> */}
+        {/*     </svg> */}
+        {/*     StreamVault Original */}
+        {/*   </span> */}
+        {/* )} */}
 
         {item.isNew && <span className="badge badge-new">New</span>}
 
@@ -87,7 +85,7 @@ export const HeroContent = memo(function HeroContent({
             src={item.logoUrl}
             alt={item.title}
             className="
-              w-full h-auto max-h-32 sm:max-h-40 lg:max-h-48
+              w-full h-auto max-h-24 sm:max-h-40 lg:max-h-48
               object-contain object-left
               drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]
             "
@@ -119,12 +117,11 @@ export const HeroContent = memo(function HeroContent({
           <span
             className={`
               font-bold
-              ${
-                item.matchScore >= 75
-                  ? "match-score-high"
-                  : item.matchScore >= 50
-                    ? "match-score-medium"
-                    : "match-score-low"
+              ${item.matchScore >= 75
+                ? "match-score-high"
+                : item.matchScore >= 50
+                  ? "match-score-medium"
+                  : "match-score-low"
               }
             `}
           >
@@ -193,10 +190,10 @@ export const HeroContent = memo(function HeroContent({
       </p>
 
       {/* ── Action Buttons ── */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex items-center gap-3 w-full sm:w-auto mt-2">
         <button
           onClick={onPlay}
-          className="btn btn-play group"
+          className="btn btn-play group flex-1 sm:flex-none justify-center"
           aria-label={`Play ${item.title}`}
         >
           <Play
@@ -212,7 +209,7 @@ export const HeroContent = memo(function HeroContent({
 
         <button
           onClick={onMoreInfo}
-          className="btn btn-secondary group"
+          className="btn btn-secondary group flex-1 sm:flex-none justify-center"
           aria-label={`More info about ${item.title}`}
         >
           <Info

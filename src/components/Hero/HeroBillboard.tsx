@@ -15,14 +15,20 @@ export const HeroBillboard = memo(function HeroBillboard({
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  // ── Reset state when item changes ────────────────
   useEffect(() => {
     // Only reset if this is the active slide being initialized
     if (isActive) {
-      setImageLoaded(false);
       setVideoLoaded(false);
       setVideoError(false);
+
+      // Check if image is already cached/loaded
+      if (imgRef.current?.complete) {
+        setImageLoaded(true);
+      } else {
+        setImageLoaded(false);
+      }
     }
   }, [item.id, isActive]);
 
@@ -56,7 +62,8 @@ export const HeroBillboard = memo(function HeroBillboard({
     if (!isActive) {
       setVideoLoaded(false);
       setVideoError(false);
-      setImageLoaded(false); // Add this
+      // We reset imageLoaded when it becomes active instead of when it leaves
+      // to avoid flickers or issues with cached images.
     }
   }, [isActive]);
 
@@ -76,10 +83,14 @@ export const HeroBillboard = memo(function HeroBillboard({
       <div
         className={`
           absolute inset-0 will-change-transform
-          ${isActive ? "transition-transform duration-20000 ease-linear scale-110" : "scale-100"}
+          ${isActive
+            ? "transition-transform duration-20000 ease-linear scale-110"
+            : "transition-transform duration-0 delay-1000 scale-100"
+          }
         `}
       >
         <img
+          ref={imgRef}
           key={item.id}
           src={item.backdropUrl}
           alt=""

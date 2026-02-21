@@ -5,7 +5,7 @@ export interface HeroItem {
   synopsis: string;
   backdropUrl: string;
   trailerUrl?: string; // mp4/webm for background video
-  contentType: "movie" | "series" | "documentary" | "special";
+  contentType: "movie" | "tv" | "documentary" | "kids" | "special";
   genres: string[];
   releaseYear: number;
   maturityRating: string; // "PG-13", "TV-MA", etc.
