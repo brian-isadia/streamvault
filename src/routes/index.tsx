@@ -3,7 +3,7 @@ import { HeroBanner, type HeroItem } from "@/components/Hero";
 import { createServerFn } from "@tanstack/react-start";
 import { fetchHeroFilms } from "@/lib/tmdb";
 import { MOCK_DATA } from "@/data/mockData";
-import { ContentRow } from "@/components/content-row";
+import { ContentRow, ContentRowSkeleton } from "@/components/content-row";
 
 const fetchFilms = createServerFn({
   method: "GET",
@@ -26,7 +26,7 @@ const {
 export const Route = createFileRoute("/")({
   component: App,
   loader: async () => {
-    const heroFilms = await fetchFilms();
+    const heroFilms: HeroItem[] = await fetchFilms();
     //   const continueWatching = await fetchContinueWatching();
     //   const trending = await fetchTrending();
     return {
@@ -42,6 +42,7 @@ export const Route = createFileRoute("/")({
       documentaries: MOCK_DOCUMENTARIES,
     };
   },
+  pendingComponent: HomePageSkeleton,
 });
 
 function App() {
@@ -137,6 +138,26 @@ function App() {
           variant="poster"
           seeAllHref="/browse/genre/documentary"
         />
+      </div>
+    </main>
+  );
+}
+
+// ------------- Loading State -----
+
+function HomePageSkeleton() {
+  return (
+    <main className="min-h-screen bg-background pb-16">
+      {/* Hero Skeleton — reuse from hero component */}
+      <div className="relative w-full min-h-[85vh] md:min-h-[56.25vw] max-h-[85vh] md:max-h-[80vh] skeleton" />
+
+      <div className="relative z-10 -mt-6 space-y-2">
+        <ContentRowSkeleton variant="backdrop" cardCount={5} />
+        <ContentRowSkeleton variant="poster" />
+        <ContentRowSkeleton variant="backdrop" cardCount={5} />
+        <ContentRowSkeleton variant="poster" />
+        <ContentRowSkeleton variant="top-ten" cardCount={5} />
+        <ContentRowSkeleton variant="poster" />
       </div>
     </main>
   );
