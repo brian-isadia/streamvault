@@ -8,7 +8,7 @@ export interface HeroItem {
   contentType: "movie" | "tv" | "documentary" | "kids" | "special";
   genres: string[];
   releaseYear: number;
-  maturityRating: string; // "PG-13", "TV-MA", etc.
+  maturityRating?: string; // "PG-13", "TV-MA", etc.
   matchScore?: number; // 0–100
   runtimeMinutes?: number; // movies
   seasonCount?: number; // series
