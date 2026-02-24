@@ -83,7 +83,9 @@ export const HeroBillboard = memo(function HeroBillboard({
           ${isActive && !showVideoLayer ? "scale-[1.05]" : "scale-100"}
         `}
       >
-        <img
+        <Image
+          layout="fullWidth"
+          priority={priority}
           ref={imgRef}
           key={item.id}
           src={item.backdropUrl}
