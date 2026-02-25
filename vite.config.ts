@@ -6,6 +6,7 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 import { fileURLToPath, URL } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 // logic to limit workers based on my pc specs
 const cpuCount = 2; // Limit to 2 to keep system responsive
@@ -26,6 +27,10 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
   ],
   server: {
     // Limits the number of file watchers and processing threads

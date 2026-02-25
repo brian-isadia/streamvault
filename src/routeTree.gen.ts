@@ -9,54 +9,117 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as WatchContentIdRouteImport } from './routes/watch.$contentId'
+import { Route as AdminTvRouteImport } from './routes/admin/tv'
+import { Route as AdminMoviesRouteImport } from './routes/admin/movies'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const WatchContentIdRoute = WatchContentIdRouteImport.update({
   id: '/watch/$contentId',
   path: '/watch/$contentId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTvRoute = AdminTvRouteImport.update({
+  id: '/tv',
+  path: '/tv',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMoviesRoute = AdminMoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/movies': typeof AdminMoviesRoute
+  '/admin/tv': typeof AdminTvRoute
   '/watch/$contentId': typeof WatchContentIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/movies': typeof AdminMoviesRoute
+  '/admin/tv': typeof AdminTvRoute
   '/watch/$contentId': typeof WatchContentIdRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/movies': typeof AdminMoviesRoute
+  '/admin/tv': typeof AdminTvRoute
   '/watch/$contentId': typeof WatchContentIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/watch/$contentId'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/movies'
+    | '/admin/tv'
+    | '/watch/$contentId'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/watch/$contentId'
-  id: '__root__' | '/' | '/watch/$contentId'
+  to: '/' | '/admin/movies' | '/admin/tv' | '/watch/$contentId' | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin/movies'
+    | '/admin/tv'
+    | '/watch/$contentId'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   WatchContentIdRoute: typeof WatchContentIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/watch/$contentId': {
       id: '/watch/$contentId'
@@ -65,22 +128,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WatchContentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/tv': {
+      id: '/admin/tv'
+      path: '/tv'
+      fullPath: '/admin/tv'
+      preLoaderRoute: typeof AdminTvRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/movies': {
+      id: '/admin/movies'
+      path: '/movies'
+      fullPath: '/admin/movies'
+      preLoaderRoute: typeof AdminMoviesRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminMoviesRoute: typeof AdminMoviesRoute
+  AdminTvRoute: typeof AdminTvRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminMoviesRoute: AdminMoviesRoute,
+  AdminTvRoute: AdminTvRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   WatchContentIdRoute: WatchContentIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
