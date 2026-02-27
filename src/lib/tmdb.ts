@@ -21,6 +21,10 @@ export function backdropURL(backdropImage: string, imageWidth?: string) {
   return url;
 }
 
+export function logoURL(logoPath: string) {
+  return `${imageBaseUrl}/w500${logoPath}`;
+}
+
 export const fetchDiscoverFilms = async (
   mediaType: "movie" | "tv" | "kids" | "documentary",
 ) => {
@@ -60,6 +64,7 @@ export const fetchDiscoverFilms = async (
           first_air_date?: string;
         }) => {
           const extraData = await fetchExtraFilmData(mediaType, film.id);
+
           const convertedGenres = film.genre_ids
             ?.map((id: number) => genreMap.get(id))
             .filter(
@@ -82,6 +87,7 @@ export const fetchDiscoverFilms = async (
             runtimeMinutes: extraData?.runtime,
             seasonCount: extraData?.seasons,
             episodeCount: extraData?.episodes,
+            logoUrl: extraData?.logoUrl,
           };
         },
       ),
@@ -100,6 +106,15 @@ const fetchExtraFilmData = async (
   let runtime: string = "";
   let seasons: number = 0;
   let episodes: number = 0;
+  let logos:
+    | {
+        aspect_ratio: number;
+        iso_639_1: string;
+        file_path: string;
+        vote_average: number;
+        width: number;
+      }[]
+    | null;
   const url = `${baseUrl}/${mediaType}/${id}?append_to_response=recommendations,videos,images,${mediaType === "tv" ? "aggregate_credits" : "credits"}&api_key=${TMDB_API_KEY}`;
 
   try {
@@ -109,6 +124,13 @@ const fetchExtraFilmData = async (
       return;
     }
     const film = await response.json();
+    logos = film.images.logos;
+    const englishLogos = logos?.filter((logo) => logo.iso_639_1 === "en") ?? [];
+    const suitableLogo = englishLogos
+      .sort((a, b) => a.width - b.width)
+      .find((logo) => logo.width <= 1000);
+    const logoPath = suitableLogo?.file_path ?? englishLogos[0]?.file_path;
+    const logoUrl = logoPath ? logoURL(logoPath) : undefined;
     if (mediaType === "tv") {
       seasons = parseInt(film.number_of_seasons);
       episodes = parseInt(film.number_of_episodes);
@@ -116,6 +138,7 @@ const fetchExtraFilmData = async (
       runtime = film.runtime;
     }
     return {
+      logoUrl,
       runtime,
       seasons,
       episodes,

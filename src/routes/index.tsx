@@ -1,9 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { HeroBanner, type HeroItem } from "@/components/Hero";
+import { createFileRoute, Await } from "@tanstack/react-router";
+import { Suspense } from "react";
+import { HeroBanner } from "@/components/Hero";
 import { createServerFn } from "@tanstack/react-start";
 import { fetchHeroFilms } from "@/lib/tmdb";
 import { MOCK_DATA } from "@/data/mockData";
 import { ContentRow, ContentRowSkeleton } from "@/components/content-row";
+import type { HeroItem } from "@/components/Hero";
+import type { ContentCardItem } from "@/components/content-row/types";
 
 const fetchFilms = createServerFn({
   method: "GET",
@@ -23,41 +26,41 @@ const {
   MOCK_DOCUMENTARIES,
 } = MOCK_DATA;
 
+interface LoaderData {
+  heroFilms: HeroItem[];
+  continueWatching: Promise<ContentCardItem[]>;
+  topPicks: Promise<ContentCardItem[]>;
+  trending: Promise<ContentCardItem[]>;
+  newReleases: Promise<ContentCardItem[]>;
+  topTen: Promise<ContentCardItem[]>;
+  myList: Promise<ContentCardItem[]>;
+  actionMovies: Promise<ContentCardItem[]>;
+  sciFi: Promise<ContentCardItem[]>;
+  documentaries: Promise<ContentCardItem[]>;
+}
+
 export const Route = createFileRoute("/")({
   component: App,
-  loader: async () => {
-    const heroFilms: HeroItem[] = await fetchFilms();
-    //   const continueWatching = await fetchContinueWatching();
-    //   const trending = await fetchTrending();
+  loader: async (): Promise<LoaderData> => {
+    const heroFilms = await fetchFilms();
     return {
       heroFilms,
-      continueWatching: MOCK_CONTINUE_WATCHING,
-      topPicks: MOCK_TOP_PICKS,
-      trending: MOCK_TRENDING,
-      newReleases: MOCK_NEW_RELEASES,
-      topTen: MOCK_TOP_TEN,
-      myList: MOCK_MY_LIST,
-      actionMovies: MOCK_ACTION,
-      sciFi: MOCK_SCI_FI,
-      documentaries: MOCK_DOCUMENTARIES,
+      continueWatching: Promise.resolve(MOCK_CONTINUE_WATCHING),
+      topPicks: Promise.resolve(MOCK_TOP_PICKS),
+      trending: Promise.resolve(MOCK_TRENDING),
+      newReleases: Promise.resolve(MOCK_NEW_RELEASES),
+      topTen: Promise.resolve(MOCK_TOP_TEN),
+      myList: Promise.resolve(MOCK_MY_LIST),
+      actionMovies: Promise.resolve(MOCK_ACTION),
+      sciFi: Promise.resolve(MOCK_SCI_FI),
+      documentaries: Promise.resolve(MOCK_DOCUMENTARIES),
     };
   },
   pendingComponent: HomePageSkeleton,
 });
 
 function App() {
-  const {
-    heroFilms,
-    continueWatching,
-    topPicks,
-    trending,
-    newReleases,
-    topTen,
-    myList,
-    actionMovies,
-    sciFi,
-    documentaries,
-  } = Route.useLoaderData();
+  const { heroFilms, continueWatching, topPicks, trending, newReleases, topTen, myList, actionMovies, sciFi, documentaries } = Route.useLoaderData() as LoaderData;
 
   return (
     <main className="min-h-screen bg-background pb-16">
@@ -67,77 +70,127 @@ function App() {
       {/* Pull rows up to overlap the hero bottom */}
       <div className="relative z-10 -mt-6 space-y-2">
         {/* 1. Continue Watching */}
-        {continueWatching.length > 0 && (
-          <ContentRow
-            title="Continue Watching"
-            items={continueWatching}
-            variant="continue-watching"
-          />
-        )}
+        <Suspense fallback={<ContentRowSkeleton variant="continue-watching" cardCount={5} />}>
+          <Await promise={continueWatching}>
+            {(items) => items.length > 0 && (
+              <ContentRow
+                title="Continue Watching"
+                items={items}
+                variant="continue-watching"
+              />
+            )}
+          </Await>
+        </Suspense>
 
         {/* 2. Top Picks For You */}
-        <ContentRow
-          title="Top Picks for You"
-          subtitle="Based on your viewing history"
-          items={topPicks}
-          variant="poster"
-          seeAllHref="/browse/recommended"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="poster" cardCount={5} />}>
+          <Await promise={topPicks}>
+            {(items) => (
+              <ContentRow
+                title="Top Picks for You"
+                subtitle="Based on your viewing history"
+                items={items}
+                variant="poster"
+                seeAllHref="/browse/recommended"
+              />
+            )}
+          </Await>
+        </Suspense>
 
         {/* 3. Trending Now */}
-        <ContentRow
-          title="Trending Now"
-          items={trending}
-          variant="backdrop"
-          seeAllHref="/browse/trending"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="backdrop" cardCount={5} />}>
+          <Await promise={trending}>
+            {(items) => (
+              <ContentRow
+                title="Trending Now"
+                items={items}
+                variant="backdrop"
+                seeAllHref="/browse/trending"
+              />
+            )}
+          </Await>
+        </Suspense>
 
         {/* 4. New Releases */}
-        <ContentRow
-          title="New on StreamVault"
-          items={newReleases}
-          variant="poster"
-          seeAllHref="/browse/new"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="poster" cardCount={5} />}>
+          <Await promise={newReleases}>
+            {(items) => (
+              <ContentRow
+                title="New on StreamVault"
+                items={items}
+                variant="poster"
+                seeAllHref="/browse/new"
+              />
+            )}
+          </Await>
+        </Suspense>
 
         {/* 5. Top 10 */}
-        <ContentRow
-          title="Top 10 in the U.S. Today"
-          items={topTen}
-          variant="top-ten"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="top-ten" cardCount={5} />}>
+          <Await promise={topTen}>
+            {(items) => (
+              <ContentRow
+                title="Top 10 in the U.S. Today"
+                items={items}
+                variant="top-ten"
+              />
+            )}
+          </Await>
+        </Suspense>
 
         {/* 6. My List */}
-        {myList.length > 0 && (
-          <ContentRow
-            title="My List"
-            items={myList}
-            variant="poster"
-            seeAllHref="/my-list"
-          />
-        )}
+        <Suspense fallback={<ContentRowSkeleton variant="poster" cardCount={5} />}>
+          <Await promise={myList}>
+            {(items) => items.length > 0 && (
+              <ContentRow
+                title="My List"
+                items={items}
+                variant="poster"
+                seeAllHref="/my-list"
+              />
+            )}
+          </Await>
+        </Suspense>
 
         {/* 7+ Genre Rows */}
-        <ContentRow
-          title="Action & Adventure"
-          items={actionMovies}
-          variant="poster"
-          seeAllHref="/browse/genre/action"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="poster" cardCount={5} />}>
+          <Await promise={actionMovies}>
+            {(items) => (
+              <ContentRow
+                title="Action & Adventure"
+                items={items}
+                variant="poster"
+                seeAllHref="/browse/genre/action"
+              />
+            )}
+          </Await>
+        </Suspense>
 
-        <ContentRow
-          title="Sci-Fi & Fantasy"
-          items={sciFi}
-          variant="backdrop"
-          seeAllHref="/browse/genre/sci-fi"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="backdrop" cardCount={5} />}>
+          <Await promise={sciFi}>
+            {(items) => (
+              <ContentRow
+                title="Sci-Fi & Fantasy"
+                items={items}
+                variant="backdrop"
+                seeAllHref="/browse/genre/sci-fi"
+              />
+            )}
+          </Await>
+        </Suspense>
 
-        <ContentRow
-          title="Documentaries"
-          items={documentaries}
-          variant="poster"
-          seeAllHref="/browse/genre/documentary"
-        />
+        <Suspense fallback={<ContentRowSkeleton variant="poster" cardCount={5} />}>
+          <Await promise={documentaries}>
+            {(items) => (
+              <ContentRow
+                title="Documentaries"
+                items={items}
+                variant="poster"
+                seeAllHref="/browse/genre/documentary"
+              />
+            )}
+          </Await>
+        </Suspense>
       </div>
     </main>
   );
