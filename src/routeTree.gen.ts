@@ -15,6 +15,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as WatchContentIdRouteImport } from './routes/watch.$contentId'
 import { Route as AdminTvRouteImport } from './routes/admin/tv'
 import { Route as AdminMoviesRouteImport } from './routes/admin/movies'
+import { Route as AdminTmdbTrendingRouteImport } from './routes/admin/tmdb/trending'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
@@ -46,6 +47,11 @@ const AdminMoviesRoute = AdminMoviesRouteImport.update({
   path: '/movies',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTmdbTrendingRoute = AdminTmdbTrendingRouteImport.update({
+  id: '/tmdb/trending',
+  path: '/tmdb/trending',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/admin/tv': typeof AdminTvRoute
   '/watch/$contentId': typeof WatchContentIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/tmdb/trending': typeof AdminTmdbTrendingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/admin/tv': typeof AdminTvRoute
   '/watch/$contentId': typeof WatchContentIdRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/tmdb/trending': typeof AdminTmdbTrendingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/admin/tv': typeof AdminTvRoute
   '/watch/$contentId': typeof WatchContentIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/tmdb/trending': typeof AdminTmdbTrendingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,8 +89,15 @@ export interface FileRouteTypes {
     | '/admin/tv'
     | '/watch/$contentId'
     | '/admin/'
+    | '/admin/tmdb/trending'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/movies' | '/admin/tv' | '/watch/$contentId' | '/admin'
+  to:
+    | '/'
+    | '/admin/movies'
+    | '/admin/tv'
+    | '/watch/$contentId'
+    | '/admin'
+    | '/admin/tmdb/trending'
   id:
     | '__root__'
     | '/'
@@ -90,6 +106,7 @@ export interface FileRouteTypes {
     | '/admin/tv'
     | '/watch/$contentId'
     | '/admin/'
+    | '/admin/tmdb/trending'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,6 +159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMoviesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/tmdb/trending': {
+      id: '/admin/tmdb/trending'
+      path: '/tmdb/trending'
+      fullPath: '/admin/tmdb/trending'
+      preLoaderRoute: typeof AdminTmdbTrendingRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -149,12 +173,14 @@ interface AdminRouteChildren {
   AdminMoviesRoute: typeof AdminMoviesRoute
   AdminTvRoute: typeof AdminTvRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminTmdbTrendingRoute: typeof AdminTmdbTrendingRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminMoviesRoute: AdminMoviesRoute,
   AdminTvRoute: AdminTvRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminTmdbTrendingRoute: AdminTmdbTrendingRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -167,3 +193,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
