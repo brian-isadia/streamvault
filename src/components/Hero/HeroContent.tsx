@@ -110,15 +110,16 @@ export const HeroContent = memo(function HeroContent({
         "
       >
         {/* Maturity Rating */}
-        <span
-          className="
+        {item.maturityRating && (
+          <span
+            className="
             px-1.5 py-0.5 border border-foreground-muted/50
             text-caption font-medium tracking-wide
           "
-        >
-          {item.maturityRating}
-        </span>
-
+          >
+            {item.maturityRating}
+          </span>
+        )}
         {/* Meta items (year, runtime, seasons) */}
         {metaItems.map((meta, i) => (
           <span key={i} className="flex items-center gap-1">

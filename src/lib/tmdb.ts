@@ -98,7 +98,7 @@ export const fetchDiscoverFilms = async (
             seasonCount: extraData?.seasons,
             episodeCount: extraData?.episodes,
             logoUrl: extraData?.logoUrl,
-            rating: extraData?.rating,
+            maturityRating: extraData?.rating,
           };
         },
       ),
