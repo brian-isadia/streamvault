@@ -57,3 +57,28 @@ export const makeMockCards = (
     href: `/${i % 3 === 0 ? "tv" : "movie"}/${prefix}-title-${i + 1}`,
   }));
 };
+
+export const normalizeRating = (rating?: string) => {
+  if (!rating) return "";
+
+  return rating
+    .replace("_", "-")
+    .replace("PG13", "PG-13")
+    .replace("TVMA", "TV-MA")
+    .replace("TV14", "TV-14")
+    .replace("TVPG", "TV-PG")
+    .replace("TVG", "TV-G")
+    .trim();
+};
+
+export const findCountryRating = (
+  results: any[],
+  preferredCountries = ["US", "GB"],
+) => {
+  for (const country of preferredCountries) {
+    const match = results.find((r) => r.iso_3166_1 === country && r.rating);
+    if (match) return match.rating;
+  }
+
+  return results.find((r) => r.rating)?.rating || "";
+};

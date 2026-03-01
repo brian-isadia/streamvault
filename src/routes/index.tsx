@@ -1,5 +1,5 @@
 import { createFileRoute, Await } from "@tanstack/react-router";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { HeroBanner } from "@/components/Hero";
 import { createServerFn } from "@tanstack/react-start";
 import { fetchHeroFilms } from "@/lib/tmdb";
@@ -8,11 +8,41 @@ import { ContentRow, ContentRowSkeleton } from "@/components/content-row";
 import type { HeroItem } from "@/components/Hero";
 import type { ContentCardItem } from "@/components/content-row/types";
 
-const fetchFilms = createServerFn({
+const fetchFilmsWithCache = createServerFn({
   method: "GET",
-}).handler(() => {
-  return fetchHeroFilms();
+}).handler(async () => {
+  const heroFilms = await fetchHeroFilms();
+  
+  const preloadLinks = heroFilms.slice(0, 3).map((film: HeroItem) => ({
+    rel: "preload" as const,
+    as: "image" as const,
+    href: film.backdropUrl,
+    fetchpriority: "high" as const,
+  }));
+
+  return { heroFilms, preloadLinks };
 });
+
+function usePreloadImages(links: { rel: "preload"; as: "image"; href: string; fetchpriority: "high" }[]) {
+  useEffect(() => {
+    const existingLinks = document.querySelectorAll('link[rel="preload"][data-hero]');
+    existingLinks.forEach(link => link.remove());
+
+    links.forEach((link) => {
+      const linkEl = document.createElement("link");
+      linkEl.rel = link.rel;
+      linkEl.as = link.as;
+      linkEl.href = link.href;
+      linkEl.setAttribute("fetchpriority", link.fetchpriority);
+      linkEl.setAttribute("data-hero", "true");
+      document.head.appendChild(linkEl);
+    });
+
+    return () => {
+      existingLinks.forEach(link => link.remove());
+    };
+  }, [links]);
+}
 
 const {
   MOCK_CONTINUE_WATCHING,
@@ -28,6 +58,7 @@ const {
 
 interface LoaderData {
   heroFilms: HeroItem[];
+  preloadLinks: { rel: "preload"; as: "image"; href: string; fetchpriority: "high" }[];
   continueWatching: Promise<ContentCardItem[]>;
   topPicks: Promise<ContentCardItem[]>;
   trending: Promise<ContentCardItem[]>;
@@ -40,11 +71,20 @@ interface LoaderData {
 }
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    links: [
+      {
+        rel: "preconnect",
+        href: "https://image.tmdb.org",
+      },
+    ],
+  }),
   component: App,
   loader: async (): Promise<LoaderData> => {
-    const heroFilms = await fetchFilms();
+    const { heroFilms, preloadLinks } = await fetchFilmsWithCache();
     return {
       heroFilms,
+      preloadLinks,
       continueWatching: Promise.resolve(MOCK_CONTINUE_WATCHING),
       topPicks: Promise.resolve(MOCK_TOP_PICKS),
       trending: Promise.resolve(MOCK_TRENDING),
@@ -60,7 +100,9 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-  const { heroFilms, continueWatching, topPicks, trending, newReleases, topTen, myList, actionMovies, sciFi, documentaries } = Route.useLoaderData() as LoaderData;
+  const { heroFilms, preloadLinks, continueWatching, topPicks, trending, newReleases, topTen, myList, actionMovies, sciFi, documentaries } = Route.useLoaderData() as LoaderData;
+
+  usePreloadImages(preloadLinks);
 
   return (
     <main className="min-h-screen bg-background pb-16">

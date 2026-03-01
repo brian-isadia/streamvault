@@ -1,8 +1,16 @@
-import { convertYear, genreMap } from "./utils";
+import {
+  convertYear,
+  findCountryRating,
+  genreMap,
+  normalizeRating,
+} from "./utils";
+import type { HeroItem } from "@/components/Hero/types";
 
 const baseUrl = `https://api.themoviedb.org/3`;
 const imageBaseUrl = `https://image.tmdb.org/t/p`;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
+
+const CACHE_TTL_MS = 5 * 60 * 1000;
 
 export function posterURL(posterPath: string | null) {
   return `${imageBaseUrl}/w342${posterPath}`;
@@ -41,7 +49,9 @@ export const fetchDiscoverFilms = async (
   }
 
   try {
-    const response = await fetch(discoverUrl);
+    const response = await fetch(discoverUrl, {
+      cache: "force-cache",
+    });
     if (!response.ok) {
       console.log("An error occured while trying to get tmdb films");
       return;
@@ -88,10 +98,12 @@ export const fetchDiscoverFilms = async (
             seasonCount: extraData?.seasons,
             episodeCount: extraData?.episodes,
             logoUrl: extraData?.logoUrl,
+            rating: extraData?.rating,
           };
         },
       ),
     );
+
     return data;
   } catch (error) {
     console.log(error);
@@ -105,6 +117,7 @@ const fetchExtraFilmData = async (
 ) => {
   let runtime: string = "";
   let seasons: number = 0;
+  let rating: string = "";
   let episodes: number = 0;
   let logos:
     | {
@@ -115,7 +128,7 @@ const fetchExtraFilmData = async (
         width: number;
       }[]
     | null;
-  const url = `${baseUrl}/${mediaType}/${id}?append_to_response=recommendations,videos,images,${mediaType === "tv" ? "aggregate_credits" : "credits"}&api_key=${TMDB_API_KEY}`;
+  const url = `${baseUrl}/${mediaType}/${id}?append_to_response=recommendations,videos,images,content_ratings,release_dates,${mediaType === "tv" ? "aggregate_credits" : "credits"}&api_key=${TMDB_API_KEY}`;
 
   try {
     const response = await fetch(url);
@@ -124,6 +137,32 @@ const fetchExtraFilmData = async (
       return;
     }
     const film = await response.json();
+    if (mediaType === "movie") {
+      const usRelease = film.release_dates?.results?.find(
+        (r: any) => r.iso_3166_1 === "US",
+      );
+
+      const certification =
+        usRelease?.release_dates.find(
+          (d: any) => d.type === 3 && d.certification,
+        )?.certification ||
+        usRelease?.release_dates.find((d: any) => d.certification)
+          ?.certification ||
+        film.release_dates?.results
+          ?.flatMap((r: any) => r.release_dates)
+          ?.find((d: any) => d.certification)?.certification;
+
+      rating = normalizeRating(certification);
+    }
+    if (mediaType === "tv") {
+      const ratings = film.content_ratings?.results || [];
+
+      const rawRating = findCountryRating(ratings, ["US", "GB"]);
+      rating = normalizeRating(rawRating);
+
+      seasons = Number(film.number_of_seasons);
+      episodes = Number(film.number_of_episodes);
+    }
     logos = film.images.logos;
     const englishLogos = logos?.filter((logo) => logo.iso_639_1 === "en") ?? [];
     const suitableLogo = englishLogos
@@ -142,6 +181,7 @@ const fetchExtraFilmData = async (
       runtime,
       seasons,
       episodes,
+      rating,
     };
   } catch (error) {
     console.error(
@@ -152,12 +192,22 @@ const fetchExtraFilmData = async (
 };
 
 // Hero Section Films
-export const fetchHeroFilms = async () => {
+let cachedHeroFilms: { data: HeroItem[]; timestamp: number } | null = null;
+
+export const fetchHeroFilms = async (): Promise<HeroItem[]> => {
+  if (
+    cachedHeroFilms &&
+    Date.now() - cachedHeroFilms.timestamp < CACHE_TTL_MS
+  ) {
+    return cachedHeroFilms.data;
+  }
+
   const [movies, series] = await Promise.all([
     fetchDiscoverFilms("movie"),
     fetchDiscoverFilms("tv"),
   ]);
 
-  const heroFilms = [...movies, ...series];
+  const heroFilms = [...movies, ...series] as HeroItem[];
+  cachedHeroFilms = { data: heroFilms, timestamp: Date.now() };
   return heroFilms;
 };
